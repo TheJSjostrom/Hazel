@@ -171,7 +171,7 @@ bool Level::CollisionTest()
 	for (auto& p : m_Pillars)
 	{
 		glm::vec2 tri[3];
-		
+
 		// Top pillars
 		for (int i = 0; i < 3; i++)
 		{
