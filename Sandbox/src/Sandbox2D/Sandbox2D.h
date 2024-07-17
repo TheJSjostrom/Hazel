@@ -5,7 +5,7 @@
 
 struct Ammunition {
 	glm::vec3 Position = { 0.0f, 0.0f, 0.0f };
-	glm::vec3 Size = { 0.4f, 0.4f, 1.0f };
+	glm::vec3 Size = { 0.3f, 0.3f, 1.0f };
 	glm::vec4 Color = { 0.877f, 0.595f, 0.138f, 1.0f };
 
 	float Velocity = 10.0f;
@@ -16,22 +16,26 @@ struct Ammunition {
 struct Quad
 {
 	glm::vec3 Position = { 0.0f, 0.0f, 0.0f };
+	glm::vec2 Size = { 2.0f, 2.0f };
+	glm::vec4 Color = { 1.8f, 0.2f, 0.3f, 1.0f };
+
+	float Rotation = 0.0f;
 };
 
 struct PlayerQuad
 {
 	glm::vec3 Position = { 1.0f, 1.0f, 0.0f };
 	glm::vec4 Color = { 0.0f, 0.0f, 0.0f, 1.0f };
+	glm::vec3 Size = { 0.75f, 0.75f, 1.0f };
 
-	float Size = 1.0f;
 	int AmmoCount = 50;
 	float Velocity = 2.0f;
 };
 
 struct Triangle
 {
-	glm::vec4 Color = { 1.0f, 0.0f, 0.0f, 1.0f };
 	glm::vec3 Position = { 0.0f, -5.0f, 0.0f };
+	glm::vec4 Color = { 1.0f, 0.0f, 0.0f, 1.0f };
 	Hazel::Ref<Hazel::Texture2D> Texture;
 
 	float Size = 5.0f;
@@ -56,7 +60,7 @@ private:
 	bool OnMouseScrolled(Hazel::MouseScrolledEvent& e);
 	bool OnMouseButtonPressed(Hazel::MouseButtonPressedEvent& e);
 	bool CollisionTest();
-	bool CollisionTestWithObject();
+	bool CollisionTestPlayerTouch();
 private:
 	Hazel::OrthographicCamera m_Camera;
 	float m_CameraRotation = 0.0f;
