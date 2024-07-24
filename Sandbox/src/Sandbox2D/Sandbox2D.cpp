@@ -51,14 +51,24 @@ void Sandbox2D::OnDetach()
 void Sandbox2D::OnUpdate(Hazel::Timestep ts)
 {
 	// Update
+
+	if (Input::IsKeyPressed(HZ_KEY_Z))
+	{
+		m_Player.Rotation += 5.0f * (float)ts;
+	}
+	else if (Input::IsKeyPressed(HZ_KEY_X))
+	{
+		m_Player.Rotation -= 5.0f * (float)ts;
+	}
 	if (Input::IsKeyPressed(HZ_KEY_A))
 	{
 		m_Player.Position.x -= m_Player.Velocity * (float)ts;
 
-		if (m_Triangle.Active) {
+		if (m_Triangle.Life > 0)
+		{
 			if (CollisionTestPlayerTouch())
 			{
-				m_Player.Position.x += m_Player.Velocity * (float)ts;
+					m_Player.Position.x += m_Player.Velocity * (float)ts;
 			}
 		}
 	}
@@ -66,7 +76,8 @@ void Sandbox2D::OnUpdate(Hazel::Timestep ts)
 	{
 		m_Player.Position.x += m_Player.Velocity * (float)ts;
 
-		if (m_Triangle.Active) {
+		if (m_Triangle.Life > 0)
+		{
 			if (CollisionTestPlayerTouch())
 			{
 				m_Player.Position.x -= m_Player.Velocity * (float)ts;
@@ -78,7 +89,8 @@ void Sandbox2D::OnUpdate(Hazel::Timestep ts)
 	{
 		m_Player.Position.y += m_Player.Velocity * (float)ts;
 
-		if (m_Triangle.Active) {
+		if (m_Triangle.Life > 0)
+		{
 			if (CollisionTestPlayerTouch())
 			{
 				m_Player.Position.y -= m_Player.Velocity * (float)ts;
@@ -89,7 +101,8 @@ void Sandbox2D::OnUpdate(Hazel::Timestep ts)
 	{
 		m_Player.Position.y -= m_Player.Velocity * (float)ts;
 
-		if (m_Triangle.Active) {
+		if (m_Triangle.Life > 0)
+		{
 			if (CollisionTestPlayerTouch())
 			{
 				m_Player.Position.y += m_Player.Velocity * (float)ts;
@@ -125,43 +138,14 @@ void Sandbox2D::OnUpdate(Hazel::Timestep ts)
 		}
 		else
 		{
-			m_Ammunition[i].Position.x += m_Ammunition[i].Velocity * (float)ts;
+			m_Ammunition[i].Position.x += cos(m_Ammunition[i].Rotation) * m_Ammunition[i].VectorLength * (float)ts;
+			m_Ammunition[i].Position.y += sin(m_Ammunition[i].Rotation) * m_Ammunition[i].VectorLength * (float)ts;
 			m_Ammunition[i].Distance += 0.2f;
-			m_Ammunition[i].Rotation -= 0.3f;
+			m_Ammunition[i].Angle -= 15.0f * (float)ts;
 		}
 	}
 
-	float x = glm::cos(m_Angle) * 3;
-	float y = glm::sin(m_Angle) * 3;
-	m_Angle += 0.03f;
-
-	// Update camera
-	m_Camera.SetRotation(m_CameraRotation);
-	m_Camera.SetPosition(m_Player.Position);
-
-	// Render
-	Hazel::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
-	Hazel::RenderCommand::Clear();
-
-	Hazel::Renderer2D::BeginScene(m_Camera);
-	Hazel::Renderer2D::DrawQuad(m_Player.Position, m_Player.Size, m_Player.Color);
-
-	for (int i = 0; i < m_Quads.size(); i++) {
-	
-		Hazel::Renderer2D::DrawQuad(m_Quads[i].Position, m_Quads[i].Size, m_Quads[i].Rotation, m_Quads[i].Color);
-
-		if (m_Quads[i].Position.x < -9.0f)
-		{
-			m_Quads[i].Position.x = 9.0f;
-		}
-
-		m_Quads[i].Position.x -= 10.0f * (float)ts;
-	}
-
-	Hazel::Renderer2D::DrawQuad({ x, y, 0.0f }, { 2.0f, 2.0f },{ x, y, 0.5f, 1.0f });
-	Hazel::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.5f }, { 20.0f, 20.0f }, m_Texture);
-	
-	if (CollisionTest() && m_Triangle.Active)
+	if (CollisionTest() && m_Triangle.Life > 0)
 	{
 		m_Ammunition.erase(m_Ammunition.begin());
 		m_Size--;
@@ -178,20 +162,48 @@ void Sandbox2D::OnUpdate(Hazel::Timestep ts)
 		m_Triangle.Size = 5.0f;
 	}
 
-	for (int i = 0; i < m_Ammunition.size(); i++)
+	float x = glm::cos(m_Angle) * 3;
+	float y = glm::sin(m_Angle) * 3;
+	m_Angle += 0.03f;
+	
+	// Update camera
+	m_Camera.SetRotation(m_CameraRotation);
+	m_Camera.SetPosition(m_Player.Position);
+
+	// Render
+	Hazel::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
+	Hazel::RenderCommand::Clear();
+
+	Hazel::Renderer2D::BeginScene(m_Camera);
+	Hazel::Renderer2D::DrawQuad(m_Player.Position, m_Player.Size, m_Player.Rotation, m_Player.Color);
+
+	for (int i = 0; i < m_Quads.size(); i++) 
 	{
-		Hazel::Renderer2D::DrawQuad(m_Ammunition[i].Position, m_Ammunition[i].Size, m_Ammunition[i].Rotation, m_Ammunition[i].Color);
+	
+		Hazel::Renderer2D::DrawQuad(m_Quads[i].Position, m_Quads[i].Size, m_Quads[i].Rotation, m_Quads[i].Color);
+
+		if (m_Quads[i].Position.x < -9.0f)
+		{
+			m_Quads[i].Position.x = 9.0f;
+		}
+
+		m_Quads[i].Position.x -= 10.0f * (float)ts;
+	}
+
+	Hazel::Renderer2D::DrawQuad({ x, y, 0.0f }, { 2.0f, 2.0f },{ x, y, 0.5f, 1.0f });
+	Hazel::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.5f }, { 20.0f, 20.0f }, m_Texture);
+
+	for (auto& Ammo : m_Ammunition)
+	{
+		Hazel::Renderer2D::DrawQuad(Ammo.Position, Ammo.Size, Ammo.Rotation, Ammo.Color);
 	}
 
 	
-		if (m_Triangle.Life)
-		{
-			Hazel::Renderer2D::DrawQuad(m_Triangle.Position, { m_Triangle.Size, m_Triangle.Size }, 0.0f, m_Triangle.Texture, m_Triangle.Color);
-		}
-		else
-		{
-			m_Triangle.Active = false;
-		}
+	if (m_Triangle.Life > 0)
+	{
+		Hazel::Renderer2D::DrawQuad(m_Triangle.Position, { m_Triangle.Size, m_Triangle.Size }, 0.0f, m_Triangle.Texture, m_Triangle.Color);
+	}
+
 	
 	Hazel::Renderer2D::EndScene();
 
@@ -211,7 +223,7 @@ void Sandbox2D::OnImGuiRender()
 		m_Triangle.Active = true;
 	}
 	ImGui::TextColored(ImVec4(1, 1, 0, 1), "Controls");
-	ImGui::Text("Walk around: WASD. \nSprint: ctrl. \nRotate the camera: QE. \nZoom in & out: Scroll wheel. \nShoot: MB1. \nReload: R");
+	ImGui::Text("Walk around: WASD. \nSprint: ctrl. \nRotate the camera: QE. \nZoom in & out: Scroll wheel. \nShoot: MB1. \nReload: R\nPress ZX to rotate the player.");
 	ImGui::Text(" ");
 	ImGui::TextColored(ImVec4(1, 1, 0, 1), "Important Stuff");
 	ImGui::BeginChild("Scrolling");
@@ -243,20 +255,12 @@ bool Sandbox2D::OnKeyPressed(Hazel::KeyPressedEvent& e)
 
 bool Sandbox2D::OnMouseButtonPressed(Hazel::MouseButtonPressedEvent& e)
 {
-	if (m_Player.AmmoCount) 
-	{
-		m_Size++;
-		m_Ammunition.resize(m_Size);
-		m_Ammunition[m_Index].Position.x = m_Player.Position.x;
-		m_Ammunition[m_Index].Position.y = m_Player.Position.y;
-		m_Index++;
-
-		m_Player.AmmoCount--;
-	}
-	else
-	{
-		std::cout << "Press R to reload!" << std::endl;
-	}
+	m_Size++;
+	m_Ammunition.resize(m_Size);
+	m_Ammunition[m_Index].Position.x = m_Player.Position.x;
+	m_Ammunition[m_Index].Position.y = m_Player.Position.y;
+	m_Ammunition[m_Index].Rotation = m_Player.Rotation;
+	m_Index++;
 
 	return false;
 }
@@ -324,12 +328,11 @@ bool Sandbox2D::CollisionTestPlayerTouch()
 		{  0.5f,  0.5f, 0.0f, 1.0f },
 		{ -0.5f,  0.5f, 0.0f, 1.0f }
 	};
-
-		const auto& pos = m_Player.Position;
+	
 		glm::vec4 playerTransformedVerts[4];
 		for (int i = 0; i < 4; i++)
 		{
-			playerTransformedVerts[i] = glm::translate(glm::mat4(1.0f), { pos.x, pos.y, 0.0f })
+			playerTransformedVerts[i] = glm::translate(glm::mat4(1.0f), m_Player.Position)
 				* glm::rotate(glm::mat4(1.0f), glm::radians(0.0f), {0.0f, 0.0f, 1.0f})
 				* glm::scale(glm::mat4(1.0f), m_Player.Size)
 				* playerVertices[i];
@@ -346,7 +349,7 @@ bool Sandbox2D::CollisionTestPlayerTouch()
 		// Top pillars
 		for (int i = 0; i < 3; i++)
 		{
-			tri[i] = glm::translate(glm::mat4(1.0f), { 0.0f, -5.0f, 0.0f })
+			tri[i] = glm::translate(glm::mat4(1.0f), m_Triangle.Position)
 				* glm::rotate(glm::mat4(1.0f), glm::radians(0.0f), { 0.0f, 0.0f, 1.0f })
 				* glm::scale(glm::mat4(1.0f), { m_Triangle.Size, m_Triangle.Size, 1.0f })
 				* pillarVertices[i];

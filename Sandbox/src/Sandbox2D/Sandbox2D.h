@@ -3,7 +3,8 @@
 #include "Hazel.h"
 #include <imgui/imgui.h>
 
-struct Ammunition {
+struct Ammunition 
+{
 	glm::vec3 Position = { 0.0f, 0.0f, 0.0f };
 	glm::vec3 Size = { 0.3f, 0.3f, 1.0f };
 	glm::vec4 Color = { 0.877f, 0.595f, 0.138f, 1.0f };
@@ -11,6 +12,8 @@ struct Ammunition {
 	float Velocity = 10.0f;
 	float Distance = 0.0f;
 	float Rotation = 0.0f;
+	float VectorLength = 10.0f;
+	float Angle = 0.0f;
 };
 
 struct Quad
@@ -30,6 +33,7 @@ struct PlayerQuad
 
 	int AmmoCount = 50;
 	float Velocity = 2.0f;
+	float Rotation = 0.0f;
 };
 
 struct Triangle
@@ -67,7 +71,7 @@ private:
 	float m_AspectRatio = 16.0f/9.0f;
 	float m_ZoomLevel = 9.0f;
 
-	float m_Angle = 0.0f;
+	float m_Angle = 0.3f;
 	float m_Target = -10.0f;
 
 	Hazel::Ref<Hazel::Texture2D> m_Texture;
@@ -86,5 +90,8 @@ private:
 	// Temp
 	Hazel::Ref<Hazel::VertexArray> m_SquareVA;
 	Hazel::Ref<Hazel::Shader> m_FlatColorShader;
+
+	float x = 0.0f;
+	float y = 0.0f;
 
 };
