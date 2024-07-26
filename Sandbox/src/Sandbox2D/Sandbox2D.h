@@ -3,7 +3,7 @@
 #include "Hazel.h"
 #include <imgui/imgui.h>
 
-struct Ammunition 
+struct Projectile
 {
 	glm::vec3 Position = { 0.0f, 0.0f, 0.0f };
 	glm::vec3 Size = { 0.3f, 0.3f, 1.0f };
@@ -17,6 +17,8 @@ struct Ammunition
 };
 
 struct Quad
+
+
 {
 	glm::vec3 Position = { 0.0f, 0.0f, 0.0f };
 	glm::vec2 Size = { 2.0f, 2.0f };
@@ -28,10 +30,10 @@ struct Quad
 struct PlayerQuad
 {
 	glm::vec3 Position = { 1.0f, 1.0f, 0.0f };
-	glm::vec4 Color = { 0.0f, 0.0f, 0.0f, 1.0f };
+	glm::vec4 Color = { 0.5f, 1.0f, 1.0f, 1.0f };
 	glm::vec3 Size = { 0.75f, 0.75f, 1.0f };
 
-	int AmmoCount = 50;
+	int ProjectileCount = 50;
 	float Velocity = 2.0f;
 	float Rotation = 0.0f;
 };
@@ -40,6 +42,7 @@ struct Triangle
 {
 	glm::vec3 Position = { 0.0f, -5.0f, 0.0f };
 	glm::vec4 Color = { 1.0f, 0.0f, 0.0f, 1.0f };
+
 	Hazel::Ref<Hazel::Texture2D> Texture;
 
 	float Size = 5.0f;
@@ -72,13 +75,12 @@ private:
 	float m_ZoomLevel = 9.0f;
 
 	float m_Angle = 0.3f;
-	float m_Target = -10.0f;
 
 	Hazel::Ref<Hazel::Texture2D> m_Texture;
 
 	int m_Size = 0;
 	int m_Index = 0;
-	std::vector<Ammunition> m_Ammunition; 
+	std::vector<Projectile> m_Projectile;
 
 	std::vector<Quad> m_Quads;
 

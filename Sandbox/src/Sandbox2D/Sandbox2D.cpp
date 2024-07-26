@@ -38,7 +38,8 @@ void Sandbox2D::OnAttach()
 	m_Triangle.Texture = Hazel::Texture2D::Create("assets/textures/Triangle.png");
 
 	m_Quads.resize(3);
-	for (int i = 0; i < m_Quads.size(); i++) {
+	for (int i = 0; i < m_Quads.size(); i++) 
+	{
 		m_Quads[i].Position.x = i * 5;
 		m_Quads[i].Position.y = 9;
 	}
@@ -54,11 +55,11 @@ void Sandbox2D::OnUpdate(Hazel::Timestep ts)
 
 	if (Input::IsKeyPressed(HZ_KEY_Z))
 	{
-		m_Player.Rotation += 5.0f * (float)ts;
+		m_Player.Rotation += 6.0f * (float)ts;
 	}
 	else if (Input::IsKeyPressed(HZ_KEY_X))
 	{
-		m_Player.Rotation -= 5.0f * (float)ts;
+		m_Player.Rotation -= 6.0f * (float)ts;
 	}
 	if (Input::IsKeyPressed(HZ_KEY_A))
 	{
@@ -128,26 +129,26 @@ void Sandbox2D::OnUpdate(Hazel::Timestep ts)
 		m_CameraRotation -= 5.0f;
 	}
 
-	for (int i = 0; i < m_Ammunition.size(); i++)
+	for (int i = 0; i < m_Projectile.size(); i++)
 	{
-		if (m_Ammunition[i].Distance >= 10.0f)
+		if (m_Projectile[i].Distance >= 10.0f)
 		{
-			m_Ammunition.erase(m_Ammunition.begin());
+			m_Projectile.erase(m_Projectile.begin());
 			m_Size--;
 			m_Index--;
 		}
 		else
 		{
-			m_Ammunition[i].Position.x += cos(m_Ammunition[i].Rotation) * m_Ammunition[i].VectorLength * (float)ts;
-			m_Ammunition[i].Position.y += sin(m_Ammunition[i].Rotation) * m_Ammunition[i].VectorLength * (float)ts;
-			m_Ammunition[i].Distance += 0.2f;
-			m_Ammunition[i].Angle -= 15.0f * (float)ts;
+			m_Projectile[i].Position.x += cos(m_Projectile[i].Angle) * m_Projectile[i].VectorLength * (float)ts;
+			m_Projectile[i].Position.y += sin(m_Projectile[i].Angle) * m_Projectile[i].VectorLength * (float)ts;
+			m_Projectile[i].Distance += 0.2f;
+			m_Projectile[i].Rotation -= 5.0f;
 		}
 	}
 
 	if (CollisionTest() && m_Triangle.Life > 0)
 	{
-		m_Ammunition.erase(m_Ammunition.begin());
+		m_Projectile.erase(m_Projectile.begin());
 		m_Size--;
 		m_Index--;
 
@@ -193,9 +194,9 @@ void Sandbox2D::OnUpdate(Hazel::Timestep ts)
 	Hazel::Renderer2D::DrawQuad({ x, y, 0.0f }, { 2.0f, 2.0f },{ x, y, 0.5f, 1.0f });
 	Hazel::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.5f }, { 20.0f, 20.0f }, m_Texture);
 
-	for (auto& Ammo : m_Ammunition)
+	for (auto& Proj : m_Projectile)
 	{
-		Hazel::Renderer2D::DrawQuad(Ammo.Position, Ammo.Size, Ammo.Rotation, Ammo.Color);
+		Hazel::Renderer2D::DrawQuad(Proj.Position, Proj.Size, Proj.Rotation, Proj.Color);
 	}
 
 	
@@ -247,7 +248,7 @@ bool Sandbox2D::OnKeyPressed(Hazel::KeyPressedEvent& e)
 	if (e.GetKeyCode() == HZ_KEY_R)
 	{
 		std::cout << "Reloaded" << std::endl;
-		m_Player.AmmoCount = 50;
+		m_Player.ProjectileCount = 50;
 	}
 
 	return false;
@@ -256,10 +257,10 @@ bool Sandbox2D::OnKeyPressed(Hazel::KeyPressedEvent& e)
 bool Sandbox2D::OnMouseButtonPressed(Hazel::MouseButtonPressedEvent& e)
 {
 	m_Size++;
-	m_Ammunition.resize(m_Size);
-	m_Ammunition[m_Index].Position.x = m_Player.Position.x;
-	m_Ammunition[m_Index].Position.y = m_Player.Position.y;
-	m_Ammunition[m_Index].Rotation = m_Player.Rotation;
+	m_Projectile.resize(m_Size);
+	m_Projectile[m_Index].Position.x = m_Player.Position.x;
+	m_Projectile[m_Index].Position.y = m_Player.Position.y;
+	m_Projectile[m_Index].Angle = m_Player.Rotation;
 	m_Index++;
 
 	return false;
@@ -282,14 +283,14 @@ bool Sandbox2D::CollisionTest()
 		{ -0.5f,  0.5f, 0.0f, 1.0f }
 	};
 
-	for (auto& Ammo : m_Ammunition) 
+	for (auto& Proj : m_Projectile)
 	{
 		glm::vec4 playerTransformedVerts[4];
 		for (int i = 0; i < 4; i++)
 		{
-			playerTransformedVerts[i] = glm::translate(glm::mat4(1.0f), Ammo.Position)
-				* glm::rotate(glm::mat4(1.0f), Ammo.Rotation, { 0.0f, 0.0f, 1.0f })
-				* glm::scale(glm::mat4(1.0f), Ammo.Size)
+			playerTransformedVerts[i] = glm::translate(glm::mat4(1.0f), Proj.Position)
+				* glm::rotate(glm::mat4(1.0f), Proj.Rotation, { 0.0f, 0.0f, 1.0f })
+				* glm::scale(glm::mat4(1.0f), Proj.Size)
 				* playerVertices[i];
 		}
 
