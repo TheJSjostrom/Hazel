@@ -11,7 +11,7 @@ struct Projectile
 
 	float Distance = 0.0f;
 	float Rotation = 0.0f;
-	float VectorLength = 10.0f;
+	float VectorLength = 12.0f;
 	float Angle = 0.0f;
 };
 
@@ -44,7 +44,6 @@ struct Triangle
 
 	float Size = 5.0f;
 	int Life = 10;
-	bool Active = true;
 };
 
 class Sandbox2D : public Hazel::Layer
@@ -85,7 +84,6 @@ private:
 
 	Triangle m_Triangle;
 
-	std::vector<Triangle> m_Triangle2;
 	// Temp
 	Hazel::Ref<Hazel::VertexArray> m_SquareVA;
 	Hazel::Ref<Hazel::Shader> m_FlatColorShader;

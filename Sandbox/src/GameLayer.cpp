@@ -41,11 +41,11 @@ void GameLayer::OnUpdate(Hazel::Timestep ts)
 
 	switch (m_State)
 	{
-	case GameState::Play:
-	{
-		m_Level.OnUpdate(ts);
-		break;
-	}
+		case GameState::Play:
+		{
+			m_Level.OnUpdate(ts);
+			break;
+		}
 	}
 
 	// Render
@@ -67,41 +67,41 @@ void GameLayer::OnImGuiRender()
 
 	switch (m_State)
 	{
-	case GameState::Play:
-	{
-		uint32_t playerScore = m_Level.GetPlayer().GetScore();
-		std::string scoreStr = std::string("Score: ") + std::to_string(playerScore);
-		ImGui::GetForegroundDrawList()->AddText(m_Font, 48.0f, ImGui::GetWindowPos(), 0xffffffff, scoreStr.c_str());
-		break;
-	}
-	case GameState::MainMenu:
-	{
-		auto pos = ImGui::GetWindowPos();
-		auto width = Application::Get().GetWindow().GetWidth();
-		auto height = Application::Get().GetWindow().GetHeight();
-		pos.x += width * 0.5f - 300.0f;
-		pos.y += 50.0f;
-		if (m_Blink)
-			ImGui::GetForegroundDrawList()->AddText(m_Font, 120.0f, pos, 0xffffffff, "Click to Play!");
-		break;
-	}
-	case GameState::GameOver:
-	{
-		auto pos = ImGui::GetWindowPos();
-		auto width = Application::Get().GetWindow().GetWidth();
-		auto height = Application::Get().GetWindow().GetHeight();
-		pos.x += width * 0.5f - 300.0f;
-		pos.y += 50.0f;
-		if (m_Blink)
-			ImGui::GetForegroundDrawList()->AddText(m_Font, 120.0f, pos, 0xffffffff, "Click to Play!");
+		case GameState::Play:
+		{
+			uint32_t playerScore = m_Level.GetPlayer().GetScore();
+			std::string scoreStr = std::string("Score: ") + std::to_string(playerScore);
+			ImGui::GetForegroundDrawList()->AddText(m_Font, 48.0f, ImGui::GetWindowPos(), 0xffffffff, scoreStr.c_str());
+			break;
+		}
+		case GameState::MainMenu:
+		{
+			auto pos = ImGui::GetWindowPos();
+			auto width = Application::Get().GetWindow().GetWidth();
+			auto height = Application::Get().GetWindow().GetHeight();
+			pos.x += width * 0.5f - 300.0f;
+			pos.y += 50.0f;
+			if (m_Blink)
+				ImGui::GetForegroundDrawList()->AddText(m_Font, 120.0f, pos, 0xffffffff, "Click to Play!");
+			break;
+		}
+		case GameState::GameOver:
+		{
+			auto pos = ImGui::GetWindowPos();
+			auto width = Application::Get().GetWindow().GetWidth();
+			auto height = Application::Get().GetWindow().GetHeight();
+			pos.x += width * 0.5f - 300.0f;
+			pos.y += 50.0f;
+			if (m_Blink)
+				ImGui::GetForegroundDrawList()->AddText(m_Font, 120.0f, pos, 0xffffffff, "Click to Play!");
 
-		pos.x += 200.0f;
-		pos.y += 150.0f;
-		uint32_t playerScore = m_Level.GetPlayer().GetScore();
-		std::string scoreStr = std::string("Score: ") + std::to_string(playerScore);
-		ImGui::GetForegroundDrawList()->AddText(m_Font, 48.0f, pos, 0xffffffff, scoreStr.c_str());
-		break;
-	}
+			pos.x += 200.0f;
+			pos.y += 150.0f;
+			uint32_t playerScore = m_Level.GetPlayer().GetScore();
+			std::string scoreStr = std::string("Score: ") + std::to_string(playerScore);
+			ImGui::GetForegroundDrawList()->AddText(m_Font, 48.0f, pos, 0xffffffff, scoreStr.c_str());
+			break;
+		}
 	}
 }
 

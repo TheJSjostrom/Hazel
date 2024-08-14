@@ -54,7 +54,7 @@ void Sandbox2D::OnUpdate(Hazel::Timestep ts)
 	////////////////////////////////////////////////////////////
 	///////////////////////// UPDATE  /////////////////////////
 	//////////////////////////////////////////////////////////
-
+	
 	if (Input::IsKeyPressed(HZ_KEY_Z))
 	{
 		m_Player.Rotation += 6.0f * (float)ts;
@@ -91,10 +91,10 @@ void Sandbox2D::OnUpdate(Hazel::Timestep ts)
 
 	if (Input::IsKeyPressed(HZ_KEY_W))
 	{
-		//glm::vec3 vec = { cos(m_Player.Rotation) * 5 * (float)ts, sin(m_Player.Rotation) * 5 * (float)ts, 0.0f };
-		//m_Player.Position += vec;
-		m_Player.Position.x += cos(m_Player.Rotation) * 5 * (float)ts;
-		m_Player.Position.y += sin(m_Player.Rotation) * 5 * (float)ts;
+		glm::vec3 vec = { cos(m_Player.Rotation) * 5 * (float)ts, sin(m_Player.Rotation) * 5 * (float)ts, 0.0f };
+		m_Player.Position = m_Player.Position + vec;
+		//m_Player.Position.x += cos(m_Player.Rotation) * 5 * (float)ts;
+		//m_Player.Position.y += sin(m_Player.Rotation) * 5 * (float)ts;
 		//m_Player.Position.y += m_Player.Velocity * (float)ts;
 
 		if (m_Triangle.Life > 0)
@@ -238,7 +238,7 @@ void Sandbox2D::OnImGuiRender()
 	if (ImGui::Button("Spawn Triangle"))
 	{
 		m_Triangle.Life = 10;
-		m_Triangle.Active = true;
+		
 	}
 	ImGui::TextColored(ImVec4(1, 1, 0, 1), "Controls");
 	ImGui::Text("Walk around: WASD. \nSprint: ctrl. \nRotate the camera: QE. \nZoom in & out: Scroll wheel. \nShoot: MB1. \nReload: R\nPress ZX to rotate the player.");
