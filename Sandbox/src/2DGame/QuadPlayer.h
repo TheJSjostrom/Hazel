@@ -12,9 +12,9 @@ public:
 
 	void Reset();
 
-	const glm::vec3& GetPosition() { return m_Position; }
-	const glm::vec2& GetSize() { return m_Size; }
-	float GetRotation() { return m_Rotation; }
+	const glm::vec3& GetPosition() const { return m_Position; }
+	const glm::vec2& GetSize() const { return m_Size; }
+	float GetRotation() const { return m_Rotation; }
 
 private:
 	glm::vec3 m_Position = { -6.0f, -6.0f, 0.0f };

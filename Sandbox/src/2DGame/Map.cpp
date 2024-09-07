@@ -27,7 +27,8 @@ void Map::Init()
 
 void Map::OnUpdate(Hazel::Timestep ts)
 {
-	m_Time += (float)ts;
+	m_Time -= (float)ts;
+
 	if (CollisionTest())
 	{
 		GameOver();
@@ -105,7 +106,7 @@ void Map::Reset()
 {
 	m_GameOver = false;
 
-	m_Time = 0.0f;
+	m_Time = 30.0f;
 	m_QuadPlayer.Reset();
 	m_TrianglePlayer.Reset();
 }

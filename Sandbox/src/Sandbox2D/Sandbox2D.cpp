@@ -55,71 +55,41 @@ void Sandbox2D::OnUpdate(Hazel::Timestep ts)
 	///////////////////////// UPDATE  /////////////////////////
 	//////////////////////////////////////////////////////////
 	
-	if (Input::IsKeyPressed(HZ_KEY_Z))
+	if (Input::IsKeyPressed(HZ_KEY_A))
 	{
 		m_Player.Rotation += 6.0f * (float)ts;
 	}
-	else if (Input::IsKeyPressed(HZ_KEY_X))
+	else if (Input::IsKeyPressed(HZ_KEY_D))
 	{
 		m_Player.Rotation -= 6.0f * (float)ts;
 	}
 
-	if (Input::IsKeyPressed(HZ_KEY_A))
-	{
-		m_Player.Position.x -= m_Player.Velocity * (float)ts;
-
-		if (m_Triangle.Life > 0)
-		{
-			if (CollisionTestPlayerTouch())
-			{
-					m_Player.Position.x += m_Player.Velocity * (float)ts;
-			}
-		}
-	}
-	else if (Input::IsKeyPressed(HZ_KEY_D))
-	{
-		m_Player.Position.x += m_Player.Velocity * (float)ts;
-
-		if (m_Triangle.Life > 0)
-		{
-			if (CollisionTestPlayerTouch())
-			{
-				m_Player.Position.x -= m_Player.Velocity * (float)ts;
-			}
-		}
-	}
-
 	if (Input::IsKeyPressed(HZ_KEY_W))
 	{
-		glm::vec3 vec = { cos(m_Player.Rotation) * 5 * (float)ts, sin(m_Player.Rotation) * 5 * (float)ts, 0.0f };
-		m_Player.Position = m_Player.Position + vec;
-		//m_Player.Position.x += cos(m_Player.Rotation) * 5 * (float)ts;
-		//m_Player.Position.y += sin(m_Player.Rotation) * 5 * (float)ts;
-		//m_Player.Position.y += m_Player.Velocity * (float)ts;
+	
+		m_Player.Position.x += cos(m_Player.Rotation) * m_Player.Velocity * (float)ts;
+		m_Player.Position.y += sin(m_Player.Rotation) * m_Player.Velocity * (float)ts;
 
 		if (m_Triangle.Life > 0)
 		{
 			if (CollisionTestPlayerTouch())
 			{
-				m_Player.Position.x -= cos(m_Player.Rotation) * 5 * (float)ts;
-				m_Player.Position.y -= sin(m_Player.Rotation) * 5 * (float)ts;
-				//m_Player.Position.y -= m_Player.Velocity * (float)ts;
+				m_Player.Position.x -= cos(m_Player.Rotation) * m_Player.Velocity * (float)ts;
+				m_Player.Position.y -= sin(m_Player.Rotation) * m_Player.Velocity * (float)ts;
 			}
 		}
 	}
-	else if (Input::IsKeyPressed(HZ_KEY_S))
+	else if (Input::IsKeyPressed(HZ_KEY_S))  
 	{
-		m_Player.Position.x -= cos(m_Player.Rotation) * 5 * (float)ts;
-		m_Player.Position.y -= sin(m_Player.Rotation) * 5 * (float)ts;
-		//m_Player.Position.y -= m_Player.Velocity * (float)ts;
+		m_Player.Position.x -= cos(m_Player.Rotation) * m_Player.Velocity * (float)ts;
+		m_Player.Position.y -= sin(m_Player.Rotation) * m_Player.Velocity * (float)ts;
 
-		if (m_Triangle.Life > 0)
+		if (m_Triangle.Life >= 0)
 		{
 			if (CollisionTestPlayerTouch())
 			{
-				m_Player.Position.x += cos(m_Player.Rotation) * 5 * (float)ts;
-				m_Player.Position.y += sin(m_Player.Rotation) * 5 * (float)ts;
-				//m_Player.Position.y += m_Player.Velocity * (float)ts;
+				m_Player.Position.x += cos(m_Player.Rotation) * m_Player.Velocity * (float)ts;
+				m_Player.Position.y += sin(m_Player.Rotation) * m_Player.Velocity * (float)ts;
 			}
 		}
 	}
@@ -144,7 +114,7 @@ void Sandbox2D::OnUpdate(Hazel::Timestep ts)
 
 	for (int i = 0; i < m_Projectile.size(); i++)
 	{
-		if (m_Projectile[i].Distance >= 100.0f)
+		if (m_Projectile[i].Distance >= 25.0f)
 		{
 			m_Projectile.erase(m_Projectile.begin());
 			m_Size--;
@@ -161,13 +131,14 @@ void Sandbox2D::OnUpdate(Hazel::Timestep ts)
 
 	if (CollisionTest() && m_Triangle.Life > 0)
 	{
+		m_Triangle.Life -= m_Projectile.front().Damage;
 		m_Projectile.erase(m_Projectile.begin());
 		m_Size--;
 		m_Index--;
 
 		m_Triangle.Color = { 1.0f, 0.0f, 0.0f, 1.0f };
 		m_Triangle.Size = 6.0f;
-		m_Triangle.Life -= 1;
+		 
 		std::cout << "Triangle life: " << m_Triangle.Life << std::endl;
 	}
 	else
@@ -237,7 +208,7 @@ void Sandbox2D::OnImGuiRender()
 	ImGui::SliderFloat("Triangle size.", &m_Triangle.Size, 0.0f, 10.0f);
 	if (ImGui::Button("Spawn Triangle"))
 	{
-		m_Triangle.Life = 10;
+		m_Triangle.Life = 1000;
 		
 	}
 	ImGui::TextColored(ImVec4(1, 1, 0, 1), "Controls");
@@ -262,23 +233,346 @@ void Sandbox2D::OnEvent(Hazel::Event& e)
 
 bool Sandbox2D::OnKeyPressed(Hazel::KeyPressedEvent& e)
 {
+	switch (e.GetKeyCode())
+	{
+		case HZ_KEY_1:
+		{
+			m_ProjectileType = ProjectileTypes::ThrowingStar;
+			break;
+		}
+		case HZ_KEY_2:
+		{ 
+			m_ProjectileType = ProjectileTypes::PistolBullet;
+			break;
+		}
+		case HZ_KEY_3:
+		{
+			m_ProjectileType = ProjectileTypes::Laser;
+			break;
+		}
+	}
+	/*
 	if (e.GetKeyCode() == HZ_KEY_R)
 	{
 		std::cout << "Reloaded" << std::endl;
 		m_Player.ProjectileCount = 50;
 	}
-
+	*/
 	return false;
 }
 
 bool Sandbox2D::OnMouseButtonPressed(Hazel::MouseButtonPressedEvent& e)
 {
-	m_Size++;
-	m_Projectile.resize(m_Size);
-	m_Projectile[m_Index].Position.x = m_Player.Position.x;
-	m_Projectile[m_Index].Position.y = m_Player.Position.y;
-	m_Projectile[m_Index].Angle = m_Player.Rotation;
-	m_Index++;
+	switch (m_ProjectileType)
+	{
+		case ProjectileTypes::ThrowingStar:
+		{
+			for (int i = 0; i < 65; i++)
+			{
+				m_Size++;
+				m_Projectile.resize(m_Size);
+				m_Projectile[m_Index].Position.x = m_Player.Position.x;
+				m_Projectile[m_Index].Position.y = m_Player.Position.y;
+				m_Projectile[m_Index].Angle = m_Player.Rotation;
+				m_Projectile[m_Index].Color = { 0.264f, 0.279f, 0.279f, 1.0f };
+				m_Projectile[m_Index].Damage = 0.0001f;
+				m_Projectile[m_Index].ProjectileType = ProjectileTypes::ThrowingStar;
+
+				if (i == 1)
+				{
+					m_Projectile[m_Index].Angle = m_Player.Rotation + 0.1f;
+				}
+				else if (i == 2)
+				{
+					m_Projectile[m_Index].Angle = m_Player.Rotation - 0.1f;
+				}
+				else if (i == 3)
+				{
+					m_Projectile[m_Index].Angle = m_Player.Rotation + 0.2f;
+				}
+				else if (i == 4)
+				{
+					m_Projectile[m_Index].Angle = m_Player.Rotation - 0.2f;
+				}
+				else if (i == 5)
+				{
+					m_Projectile[m_Index].Angle = m_Player.Rotation + 0.3f;
+				}
+				else if (i == 6)
+				{
+					m_Projectile[m_Index].Angle = m_Player.Rotation - 0.3f;
+				}
+				else if (i == 7)
+				{
+					m_Projectile[m_Index].Angle = m_Player.Rotation + 0.4f;
+				}
+				else if (i == 8)
+				{
+					m_Projectile[m_Index].Angle = m_Player.Rotation - 0.4f;
+				}
+				else if (i == 9)
+				{
+					m_Projectile[m_Index].Angle = m_Player.Rotation + 0.5f;
+				}
+				else if (i == 10)
+				{
+					m_Projectile[m_Index].Angle = m_Player.Rotation - 0.5f;
+				}
+				else if (i == 11)
+				{
+					m_Projectile[m_Index].Angle = m_Player.Rotation + 0.6f;
+				}
+				else if (i == 12)
+				{
+					m_Projectile[m_Index].Angle = m_Player.Rotation - 0.6f;
+				}
+				else if (i == 13)
+				{
+					m_Projectile[m_Index].Angle = m_Player.Rotation + 0.7f;
+				}
+				else if (i == 14)
+				{
+					m_Projectile[m_Index].Angle = m_Player.Rotation - 0.7f;
+				}
+				else if (i == 15)
+				{
+					m_Projectile[m_Index].Angle = m_Player.Rotation + 0.8f;
+				}
+				else if (i == 16)
+				{
+					m_Projectile[m_Index].Angle = m_Player.Rotation - 0.8f;
+				}
+				else if (i == 17)
+				{
+					m_Projectile[m_Index].Angle = m_Player.Rotation + 0.9f;
+				}
+				else if (i == 18)
+				{
+					m_Projectile[m_Index].Angle = m_Player.Rotation - 0.9f;
+				}
+				else if (i == 19)
+				{
+					m_Projectile[m_Index].Angle = m_Player.Rotation + 1.0f;
+				}
+				else if (i == 20)
+				{
+					m_Projectile[m_Index].Angle = m_Player.Rotation - 1.0f;
+				}
+				else if (i == 21)
+				{
+					m_Projectile[m_Index].Angle = m_Player.Rotation + 1.1f;
+				}
+				else if (i == 22)
+				{
+					m_Projectile[m_Index].Angle = m_Player.Rotation - 1.1f;
+				}
+				else if (i == 23)
+				{
+					m_Projectile[m_Index].Angle = m_Player.Rotation + 1.2f;
+				}
+				else if (i == 24)
+				{
+					m_Projectile[m_Index].Angle = m_Player.Rotation - 1.2f;
+				}
+				else if (i == 25)
+				{
+					m_Projectile[m_Index].Angle = m_Player.Rotation + 1.3f;
+				}
+				else if (i == 26)
+				{
+					m_Projectile[m_Index].Angle = m_Player.Rotation - 1.3f;
+				}
+				else if (i == 27)
+				{
+					m_Projectile[m_Index].Angle = m_Player.Rotation + 1.4f;
+				}
+				else if (i == 28)
+				{
+					m_Projectile[m_Index].Angle = m_Player.Rotation - 1.4f;
+				}
+				else if (i == 29)
+				{
+					m_Projectile[m_Index].Angle = m_Player.Rotation + 1.5f;
+				}
+				else if (i == 30)
+				{
+					m_Projectile[m_Index].Angle = m_Player.Rotation - 1.5f;
+				}
+				else if (i == 31)
+				{
+					m_Projectile[m_Index].Angle = m_Player.Rotation + 1.6f;
+				}
+				else if (i == 32)
+				{
+					m_Projectile[m_Index].Angle = m_Player.Rotation - 1.6f;
+				}
+				else if (i == 33)
+				{
+					m_Projectile[m_Index].Angle = m_Player.Rotation + 1.7f;
+				}
+				else if (i == 34)
+				{
+					m_Projectile[m_Index].Angle = m_Player.Rotation - 1.7f;
+				}
+				else if (i == 35)
+				{
+					m_Projectile[m_Index].Angle = m_Player.Rotation + 1.8f;
+				}
+				else if (i == 36)
+				{
+					m_Projectile[m_Index].Angle = m_Player.Rotation - 1.8f;
+				}
+				else if (i == 37)
+				{
+					m_Projectile[m_Index].Angle = m_Player.Rotation + 1.9f;
+				}
+				else if (i == 38)
+				{
+					m_Projectile[m_Index].Angle = m_Player.Rotation - 1.9f;
+				}
+				else if (i == 39)
+				{
+					m_Projectile[m_Index].Angle = m_Player.Rotation + 2.0f;
+				}
+				else if (i == 40)
+				{
+					m_Projectile[m_Index].Angle = m_Player.Rotation - 2.0f;
+				}
+				else if (i == 41)
+				{
+					m_Projectile[m_Index].Angle = m_Player.Rotation + 2.1f;
+				}
+				else if (i == 42)
+				{
+					m_Projectile[m_Index].Angle = m_Player.Rotation - 2.1f;
+				}
+				else if (i == 43)
+				{
+					m_Projectile[m_Index].Angle = m_Player.Rotation + 2.2f;
+				}
+				else if (i == 44)
+				{
+					m_Projectile[m_Index].Angle = m_Player.Rotation - 2.2f;
+				}
+				else if (i == 45)
+				{
+					m_Projectile[m_Index].Angle = m_Player.Rotation + 2.2f;
+				}
+				else if (i == 46)
+				{
+					m_Projectile[m_Index].Angle = m_Player.Rotation - 2.2f;
+				}
+				else if (i == 47)
+				{
+					m_Projectile[m_Index].Angle = m_Player.Rotation + 2.3f;
+				}
+				else if (i == 48)
+				{
+					m_Projectile[m_Index].Angle = m_Player.Rotation - 2.3f;
+				}
+				else if (i == 49)
+				{
+					m_Projectile[m_Index].Angle = m_Player.Rotation + 2.4f;
+				}
+				else if (i == 50)
+				{
+					m_Projectile[m_Index].Angle = m_Player.Rotation - 2.4f;
+				}
+				else if (i == 51)
+				{
+					m_Projectile[m_Index].Angle = m_Player.Rotation + 2.5f;
+				}
+				else if (i == 52)
+				{
+					m_Projectile[m_Index].Angle = m_Player.Rotation - 2.5f;
+				}
+				else if (i == 53)
+				{
+					m_Projectile[m_Index].Angle = m_Player.Rotation + 2.6f;
+				}
+				else if (i == 54)
+				{
+					m_Projectile[m_Index].Angle = m_Player.Rotation - 2.6f;
+				}
+				else if (i == 55)
+				{
+					m_Projectile[m_Index].Angle = m_Player.Rotation + 2.7f;
+				}
+				else if (i == 56)
+				{
+					m_Projectile[m_Index].Angle = m_Player.Rotation - 2.7f;
+				}
+				else if (i == 57)
+				{
+					m_Projectile[m_Index].Angle = m_Player.Rotation + 2.8f;
+				}
+				else if (i == 58)
+				{
+					m_Projectile[m_Index].Angle = m_Player.Rotation - 2.8f;
+				}
+				else if (i == 59)
+				{
+					m_Projectile[m_Index].Angle = m_Player.Rotation + 2.9f;
+				}
+				else if (i == 60)
+				{
+					m_Projectile[m_Index].Angle = m_Player.Rotation - 2.9f;
+				}
+				else if (i == 61)
+				{
+					m_Projectile[m_Index].Angle = m_Player.Rotation + 3.0f;
+				}
+				else if (i == 62)
+				{
+					m_Projectile[m_Index].Angle = m_Player.Rotation - 3.0f;
+				}
+				else if (i == 63)
+				{
+					m_Projectile[m_Index].Angle = m_Player.Rotation + 3.1f;
+					}
+				else if (i == 64)
+				{
+					m_Projectile[m_Index].Angle = m_Player.Rotation - 3.1f;
+					}
+
+
+
+				m_Index++;
+			}
+
+			break;
+		}
+		case ProjectileTypes::PistolBullet:
+		{
+			m_Size++;
+			m_Projectile.resize(m_Size);
+			m_Projectile[m_Index].Position.x = m_Player.Position.x;
+			m_Projectile[m_Index].Position.y = m_Player.Position.y;
+			m_Projectile[m_Index].Angle = m_Player.Rotation;
+			m_Projectile[m_Index].Color = { 0.0f, 1.0f, 0.0f, 1.0f };
+			m_Projectile[m_Index].Size = { 0.20f, 0.20f, 1.0f };
+			m_Projectile[m_Index].Damage = 2.0f;
+			m_Projectile[m_Index].ProjectileType = ProjectileTypes::PistolBullet;
+			m_Index++;
+
+			break;
+		}
+		case ProjectileTypes::Laser:
+		{
+			m_Size++;
+			m_Projectile.resize(m_Size);
+			m_Projectile[m_Index].Position.x = m_Player.Position.x;
+			m_Projectile[m_Index].Position.y = m_Player.Position.y;
+			m_Projectile[m_Index].Angle = m_Player.Rotation;
+			m_Projectile[m_Index].Color = { 1.0f, 0.0f, 0.0f, 1.0f };
+			m_Projectile[m_Index].Damage = 4.0f;
+			m_Projectile[m_Index].ProjectileType = ProjectileTypes::Laser;
+			m_Index++;
+
+			break;
+		}
+	}
+
 
 	return false;
 }

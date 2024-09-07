@@ -11,9 +11,9 @@ class Sandbox : public Hazel::Application
 public:
 	Sandbox()
 	{
-		PushLayer(new GameLayer2D());
+		//PushLayer(new GameLayer2D());
 		//PushLayer(new GameLayer());
-		//PushLayer(new Sandbox2D());
+		PushLayer(new Sandbox2D());
 	}
 
 	~Sandbox()

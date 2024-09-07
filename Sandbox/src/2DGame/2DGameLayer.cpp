@@ -66,16 +66,25 @@ void GameLayer2D::OnImGuiRender()
 	{
 		case GameState::Play:
 		{
-		/*
-			uint32_t QuadplayerTime = m_Map.GetTime();
-			std::string scoreStr = std::string("Time: ") + std::to_string(QuadplayerTime);
-			ImGui::GetForegroundDrawList()->AddText(m_Font, 48.0f, ImGui::GetWindowPos(), 0xffffffff, scoreStr.c_str());
-		*/
-			auto pos = ImGui::GetWindowPos();
+
 			auto width = Application::Get().GetWindow().GetWidth();
-			auto height = Application::Get().GetWindow().GetHeight();
-			pos.x += width * 0.5f - 500.0f;
-			pos.y += -30.0f;
+			auto QuadPlayerScorePos = ImGui::GetWindowPos();
+			
+			QuadPlayerScorePos.x += width * 0.75f;
+			uint32_t QuadplayerTime2 = m_Map.GetTime();
+			std::string scoreStr2 = std::string("Quad Score: ") + std::to_string(QuadplayerTime2);
+			ImGui::GetForegroundDrawList()->AddText(m_Font, 39.0f, QuadPlayerScorePos, 0xffffffff, scoreStr2.c_str());
+
+			auto TrianglePlayerScorePos = ImGui::GetWindowPos();
+			TrianglePlayerScorePos.x += width * 0.1f;
+			uint32_t QuadplayerTime = m_Map.GetTime();
+			std::string scoreStr = std::string("Triangle Score: ") + std::to_string(QuadplayerTime);
+			ImGui::GetForegroundDrawList()->AddText(m_Font, 39.0f, TrianglePlayerScorePos, 0xffffffff, scoreStr.c_str());
+		
+
+		   // Timer
+			auto pos = ImGui::GetWindowPos();
+			pos.y -= 20.0f;
 			float Time = m_Map.GetTime();
 			m_TimerStr = std::string("") + std::to_string(Time);
 

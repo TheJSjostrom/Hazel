@@ -29,5 +29,5 @@ private:
 	Hazel::Ref<Hazel::Texture2D> m_FloorTexture;
 
 	bool m_GameOver = false;
-	float m_Time = 0.0f;
+	float m_Time = 30.0f;
 };

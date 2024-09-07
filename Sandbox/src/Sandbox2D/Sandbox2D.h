@@ -3,6 +3,11 @@
 #include "Hazel.h"
 #include <imgui/imgui.h>
 
+enum class ProjectileTypes
+{
+	ThrowingStar = 0, PistolBullet = 1, Laser = 2
+};
+
 struct Projectile
 {
 	glm::vec3 Position = { 0.0f, 0.0f, 0.0f };
@@ -13,6 +18,9 @@ struct Projectile
 	float Rotation = 0.0f;
 	float VectorLength = 12.0f;
 	float Angle = 0.0f;
+	float Damage = 0.0f;
+
+	ProjectileTypes ProjectileType;
 };
 
 struct Quad
@@ -28,10 +36,10 @@ struct PlayerQuad
 {
 	glm::vec3 Position = { 0.0f, 0.0f, 0.0f };
 	glm::vec4 Color = { 0.5f, 1.0f, 1.0f, 1.0f };
-	glm::vec3 Size = { 0.75f, 0.75f, 1.0f };
+	glm::vec3 Size = { 0.35f, 0.35f, 1.0f };
 
 	int ProjectileCount = 50;
-	float Velocity = 2.0f;
+	float Velocity = 5.0f;
 	float Rotation = 0.0f;
 };
 
@@ -39,11 +47,10 @@ struct Triangle
 {
 	glm::vec3 Position = { 0.0f, 5.0f, 0.0f };
 	glm::vec4 Color = { 1.0f, 0.0f, 0.0f, 1.0f };
-
 	Hazel::Ref<Hazel::Texture2D> Texture;
 
 	float Size = 5.0f;
-	int Life = 10;
+	int Life = 1000;
 };
 
 class Sandbox2D : public Hazel::Layer
@@ -74,6 +81,7 @@ private:
 
 	Hazel::Ref<Hazel::Texture2D> m_Texture;
 
+	ProjectileTypes m_ProjectileType = ProjectileTypes::ThrowingStar;
 	int m_Size = 0;
 	int m_Index = 0;
 	std::vector<Projectile> m_Projectile;
