@@ -10,15 +10,24 @@ enum class ProjectileTypes
 
 struct Projectile
 {
-	glm::vec3 Position = { 0.0f, 0.0f, 0.0f };
-	glm::vec3 Size = { 0.3f, 0.3f, 1.0f };
-	glm::vec4 Color = { 0.877f, 0.595f, 0.138f, 1.0f };
+	Projectile() = default;
 
-	float Distance = 0.0f;
-	float Rotation = 0.0f;
-	float VectorLength = 12.0f;
-	float Angle = 0.0f;
-	float Damage = 0.0f;
+	Projectile(const glm::vec3& position, const glm::vec3& size, const glm::vec4& color, float currentDistance, float maxDistance, float rotation, float vectorLength, float angle, float damage, ProjectileTypes projectileType)
+		: Position(position), Size(size), Color(color), CurrentDistance(currentDistance), MaxDistance(maxDistance), Rotation(rotation), VectorLength(vectorLength), Angle(angle), Damage(damage), ProjectileType(projectileType)
+	{
+	}
+
+ 
+	glm::vec3 Position;
+	glm::vec3 Size;
+	glm::vec4 Color;
+
+	float CurrentDistance;
+	float MaxDistance;
+	float Rotation;
+	float VectorLength;
+	float Angle;
+	float Damage;
 
 	ProjectileTypes ProjectileType;
 };
@@ -84,7 +93,7 @@ private:
 	ProjectileTypes m_ProjectileType = ProjectileTypes::ThrowingStar;
 	int m_Size = 0;
 	int m_Index = 0;
-	std::vector<Projectile> m_Projectile;
+	std::vector<Projectile> m_Projectiles;
 
 	std::vector<Quad> m_Quads;
 
